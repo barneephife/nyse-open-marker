@@ -1,0 +1,12 @@
+# TradingView Pine Script compilation files
+*.pine.compiled
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating System files
+.DS_Store
+Thumbs.db 
