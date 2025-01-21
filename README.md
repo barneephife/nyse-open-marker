@@ -2,6 +2,24 @@
 
 A Pine Script indicator that displays NYSE market open and close times on TradingView charts, automatically adjusting to your local timezone.
 
+## Screenshots
+
+### Weekly Timeframe View
+![Weekly Timeframe Example](images/1w01.jpg)
+*Market open/close lines shown on weekly chart*
+
+### Daily Timeframe View
+![Daily Timeframe Example](images/1d01.jpg)
+*Market open/close lines with next event indicator on daily chart*
+
+### 4-Hour Timeframe View
+![4-Hour Timeframe Example](images/4hr01.jpg)
+*Detailed view of market events on 4-hour chart*
+
+### 1-Hour Timeframe View
+![1-Hour Timeframe Example](images/1hr01.jpg)
+*Precise market timing on 1-hour chart*
+
 ## Features
 
 - Displays vertical lines at NYSE market open (14:30 local time) and close (21:00 local time)
