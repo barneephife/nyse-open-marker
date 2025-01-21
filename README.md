@@ -20,6 +20,10 @@ A Pine Script indicator that displays NYSE market open and close times on Tradin
 ![1-Hour Timeframe Example](images/1hr01.jpg)
 *Precise market timing on 1-hour chart*
 
+### 15-Minute Timeframe View
+![15-Minute Timeframe Example](images/15m01.jpg)
+*High precision view of market events on 15-minute chart*
+
 ## Features
 
 - Displays vertical lines at NYSE market open (14:30 local time) and close (21:00 local time)
