@@ -1,5 +1,5 @@
 //@version=6
-// @description Displays NYSE market open and close times with customizable vertical lines and labels, automatically adjusting to Zurich timezone
+// @description Displays NYSE market open and close times with customizable vertical lines and labels, automatically adjusting to your local timezone
 indicator("NYSE Market Lines & Labels", "NYSE Times", overlay=true)
 
 // Helper function to create line style
@@ -29,18 +29,17 @@ closeLineStyle = input.string("solid", "Style", options=["solid", "dashed", "dot
 showLabels = input.bool(true, "Show Labels", inline="labels", group=GRP_LABELS)
 labelSize = input.string("large", "Size", options=["small", "normal", "large"], inline="labels", group=GRP_LABELS)
 
-// Constants for market times in Zurich (CET)
-var int MARKET_OPEN_HOUR = 14  // Changed from 15 to 14 - NYSE opens 15:30 CET but we need to look for 14:30
+// Constants for market times in Eastern Time (ET)
+var int MARKET_OPEN_HOUR = 14  // 9:30 ET = 14:30 UTC
 var int MARKET_OPEN_MINUTE = 30
-var int MARKET_CLOSE_HOUR = 21  // Changed from 22 to 21 - NYSE closes 22:00 CET but we need to look for 21:00
+var int MARKET_CLOSE_HOUR = 21  // 16:00 ET = 21:00 UTC
 var int MARKET_CLOSE_MINUTE = 0
 
-// Helper function to get market hours
-getMarketHours() =>
-    [MARKET_OPEN_HOUR, MARKET_CLOSE_HOUR]
-
-// Get market hours
-[marketOpenHour, marketCloseHour] = getMarketHours()
+// Variables to track future lines and labels
+var line futureOpenLine = na
+var label futureOpenLabel = na
+var line futureCloseLine = na
+var label futureCloseLabel = na
 
 // Check if current bar is exactly at market time
 isExactMarketTime(int targetHour, int targetMinute) =>
@@ -52,7 +51,7 @@ isBeforeMarketOpen() =>
     currentMinute = minute(time)
     isWeekday = dayofweek != dayofweek.sunday and dayofweek != dayofweek.saturday
     
-    isWeekday and (currentHour < marketOpenHour or (currentHour == marketOpenHour and currentMinute < MARKET_OPEN_MINUTE))
+    isWeekday and (currentHour < MARKET_OPEN_HOUR or (currentHour == MARKET_OPEN_HOUR and currentMinute < MARKET_OPEN_MINUTE))
 
 // Calculate bars until next market open
 calcBarsUntilMarketOpen() =>
@@ -61,7 +60,7 @@ calcBarsUntilMarketOpen() =>
     
     // Calculate total minutes for current time and target time
     currentTotalMinutes = currentHour * 60 + currentMinute
-    targetTotalMinutes = marketOpenHour * 60 + MARKET_OPEN_MINUTE
+    targetTotalMinutes = MARKET_OPEN_HOUR * 60 + MARKET_OPEN_MINUTE
     
     // Calculate minutes until next market open
     minutesUntilOpen = if currentTotalMinutes < targetTotalMinutes
@@ -72,20 +71,14 @@ calcBarsUntilMarketOpen() =>
     // Convert minutes to bars based on chart timeframe
     math.round(minutesUntilOpen / timeframe.multiplier)
 
-// Variables to track future lines and labels
-var line futureOpenLine = na
-var label futureOpenLabel = na
-var line futureCloseLine = na
-var label futureCloseLabel = na
-
 // Draw historical vertical lines and labels
-if isExactMarketTime(marketOpenHour, MARKET_OPEN_MINUTE)
+if isExactMarketTime(MARKET_OPEN_HOUR, MARKET_OPEN_MINUTE)
     line.new(bar_index, low - (high - low) * 2, bar_index, high + (high - low) * 2, color=openLineColor, width=openLineWidth, style=getLineStyle(openLineStyle), extend=extend.both)
     
     if showLabels
         label.new(bar_index, high + (high - low) * 0.5, "Market Open", color=color.new(color.white, 100), textcolor=openLineColor, style=label.style_label_down, size=getLabelSize(labelSize))
 
-if isExactMarketTime(marketCloseHour, MARKET_CLOSE_MINUTE)
+if isExactMarketTime(MARKET_CLOSE_HOUR, MARKET_CLOSE_MINUTE)
     line.new(bar_index, low - (high - low) * 2, bar_index, high + (high - low) * 2, color=closeLineColor, width=closeLineWidth, style=getLineStyle(closeLineStyle), extend=extend.both)
     
     if showLabels
@@ -107,12 +100,12 @@ if barstate.islast
             futureOpenLabel := label.new(bar_index + barsUntilOpen, high + (high - low) * 0.5, "Next Market Open", color=color.new(color.white, 100), textcolor=color.new(openLineColor, 60), style=label.style_label_down, size=getLabelSize(labelSize))
 
     // Draw next market close line
-    if hour(time) == marketCloseHour and minute(time) == MARKET_CLOSE_MINUTE
+    if hour(time) == MARKET_CLOSE_HOUR and minute(time) == MARKET_CLOSE_MINUTE
         futureCloseLine := line.new(bar_index, low - (high - low) * 2, bar_index, high + (high - low) * 2, color=color.new(closeLineColor, 60), width=closeLineWidth, style=getLineStyle(closeLineStyle), extend=extend.both)
         
         if showLabels
             futureCloseLabel := label.new(bar_index, high + (high - low) * 0.5, "Next Market Close", color=color.new(color.white, 100), textcolor=color.new(closeLineColor, 60), style=label.style_label_down, size=getLabelSize(labelSize))
 
 // Plot alert dots for market events
-plotchar(isExactMarketTime(marketOpenHour, MARKET_OPEN_MINUTE), "Market Open", "•", location.top, color.blue, size=size.large)
-plotchar(isExactMarketTime(marketCloseHour, MARKET_CLOSE_MINUTE), "Market Close", "•", location.top, color.red, size=size.large) 
+plotchar(isExactMarketTime(MARKET_OPEN_HOUR, MARKET_OPEN_MINUTE), "Market Open", "•", location.top, color.blue, size=size.large)
+plotchar(isExactMarketTime(MARKET_CLOSE_HOUR, MARKET_CLOSE_MINUTE), "Market Close", "•", location.top, color.red, size=size.large) 
