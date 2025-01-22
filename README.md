@@ -26,7 +26,7 @@ A Pine Script indicator that displays NYSE market open and close times on Tradin
 
 ## Features
 
-- Displays vertical lines at NYSE market open (14:30 local time) and close (21:00 local time)
+- Displays vertical lines at NYSE market open (15:30 CET/CEST) and close (22:00 CET/CEST)
 - Shows both historical market events and the next upcoming market open/close
 - Next market events are shown with semi-transparent lines and "Next" labels
 - Automatically skips weekends when calculating next market events
@@ -35,6 +35,7 @@ A Pine Script indicator that displays NYSE market open and close times on Tradin
 - Debug information showing time ranges and market status
 - Visual confirmation dots at the top of the chart
 - Only shows indicators on weekdays (Monday-Friday)
+- Automatically handles timezone differences and DST changes
 
 ## Installation
 
@@ -83,22 +84,31 @@ Two versions are available:
 
 ## Notes
 
-- Times are displayed in your local timezone (14:30 for market open, 21:00 for market close)
-- Indicators only appear on weekdays
+- Times are displayed in your local timezone
+- The indicator automatically adjusts for:
+  - Standard Time vs Daylight Saving Time
+  - Different DST transition dates between US and Europe
+  - Your local timezone settings
 - Historical data will show all previous market open/close lines
-- Next market events automatically adjust for weekends, skipping to the next trading day
+- Next market events automatically adjust for weekends
+- Semi-transparent lines indicate upcoming market events
+- "Next Market Open/Close" labels help distinguish future events from historical ones
 
 ## Market Hours Information
 
-The New York Stock Exchange (NYSE) is open for 6.5 hours per trading day.
+The New York Stock Exchange (NYSE) regular trading hours in different timezones:
 
-Regular Trading Hours:
-	•	Start: 9:30 AM Eastern Time (ET)
-	•	End: 4:00 PM Eastern Time (ET)
+Eastern Time (ET):
+- Open: 9:30 AM ET
+- Close: 4:00 PM ET
 
-Total Duration:
-
-4:00 PM - 9:30 AM = 6 hours 30 minutes (6.5 hours).
+Central European Time (CET/CEST):
+- Standard Time (October-March):
+  - Open: 15:30 CET
+  - Close: 22:00 CET
+- Daylight Saving Time (March-October):
+  - Open: 15:30 CEST
+  - Close: 22:00 CEST
 
 ---
 
@@ -106,11 +116,11 @@ Zurich is typically in the Central European Time (CET) zone, which is 6 hours ah
 
 NYSE Hours in Zurich Time:
 	1.	Standard Time (late fall to early spring):
-	•	NYSE opens at 3:30 PM Zurich time.
-	•	NYSE closes at 10:00 PM Zurich time.
+	•	NYSE opens at 3:30 PM Zurich time. (15:30	)
+	•	NYSE closes at 10:00 PM Zurich time. (22:00)
 	2.	Daylight Saving Time (spring to late fall):
-	•	NYSE opens at 2:30 PM Zurich time.
-	•	NYSE closes at 9:00 PM Zurich time.
+	•	NYSE opens at 2:30 PM Zurich time. (14:30)
+	•	NYSE closes at 9:00 PM Zurich time. (21:00)
 
 Notes:
 	•	The U.S. and Europe don't switch between standard and daylight saving time on the same dates, so there are a few weeks of overlap where the difference might temporarily shift.
